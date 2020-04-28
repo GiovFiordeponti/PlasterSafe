@@ -11,6 +11,6 @@ As part the [Internet of Things course of MSc in Computer Science Engineering at
 
 ## Authors
 
-- [Gianluca Circelli](https://www.linkedin.com/in/gianluca-circelli-825a06195/)
+- [Gianluca Circelli](https://github.com/circ93)
 - [Giovanni Fiordeponti](https://www.linkedin.com/in/giovanni-fiordeponti-070aa3172/)
 - [Valerio Valente](https://www.linkedin.com/in/valerio-valente-222382190/)
