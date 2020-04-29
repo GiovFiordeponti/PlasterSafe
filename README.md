@@ -9,6 +9,10 @@ As part the [Internet of Things course of MSc in Computer Science Engineering at
 - [Architecture](https://github.com/FlowerOfTheBridges/PlasterTalk/tree/master/Architecture): here you can find the main technologies and implementation techniques used in order to make a working prototype
 - [Evaluation](https://github.com/FlowerOfTheBridges/PlasterTalk/tree/master/Evaluation): here you can find some insights on how both design and architectural process have been evaluated.
 
+Also:
+- A brief video made by Valerio which explains the key aspects of the PlasterTalk design process can be seen [here](https://youtu.be/3rEHzNmYxQY).
+- A brief video made by Giovanni which explains the key elements of the PlasterTalk architecture can be seen [here](https://youtu.be/ltyrwNhfKdc).
+
 ## Authors
 
 - [Gianluca Circelli](https://www.linkedin.com/in/gianluca-circelli-6b05471a8/)
