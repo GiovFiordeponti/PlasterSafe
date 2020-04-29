@@ -27,7 +27,7 @@ In the end three end-user applications will interact with this system. This thre
   
   These task can be done by retrieving the statues measurements from the cloud
 * A web application will be used by curators and archivists of the museum in order to have a general overview of the museum and be able to do the following task:
- * assign a statue to a given room covered by one of the proximity beacons,
- * assign information to a given statue and see the relative feedback by the user,
- * unlock a statue in order to change its location within the museum.
+  * assign a statue to a given room covered by one of the proximity beacons,
+  * assign information to a given statue and see the relative feedback by the user,
+  * unlock a statue in order to change its location within the museum.
   
