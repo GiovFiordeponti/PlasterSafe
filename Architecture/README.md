@@ -11,7 +11,7 @@ As we can see:
 * The statues need to be registered to The [Things Network](https://www.thethingsnetwork.org/), a decentralized LoRaWAN infrastructure that will give us an easy way to register, manage and use things.
 * Each room of the museum will display statues where a board will be placed on the support surface. In particular this board needs to satisfy the following requirements:
   * run an instance of [RIOT-OS](https://github.com/RIOT-OS/RIOT),
-  * LoRaWAN technology support,
+  * *LoRaWAN* technology support,
   * gyroscope and accelerometer sensors.
   
   The main goals of the application running on the board will be:
@@ -20,14 +20,15 @@ As we can see:
 * Each room of the museum will be equipped with an [Estimote proximity sensor](https://developer.estimote.com/), that will be recognized by mobile application of visitors thanks to a Bluetooth communication. 
 
 In the end three end-user applications will interact with this system. This three applications consists of:
-* A mobile application developed with Android Studio which will give to the user the possibility to see the information about near-by station, by using Bluetooth technology in order to gather the location of the current room from the nearest beacon. The user can also leave feedbacks, in order to improve the overall presentation of the museum.
+* A mobile application developed with Android Studio which will give to the user the possibility to see the information about near-by station, by using Bluetooth technology in order to gather the location of the current room from the nearest beacon. The user can also leave feedbacks, in order to improve the overall presentation of the museum. This values will be retrieved from the *Elastic Beanstalk Web API* using REST calls.
 * A mobile application developed with Android Studio which will give to maintenance and security staff to see if:
   * some statues are subject to extraneous movements,
   * control the movements of the statue while moving.
+  This values will be retrieved from the *Elastic Beanstalk Web API* using a WebSocket
   
   These task can be done by retrieving the statues measurements from the cloud
 * A web application will be used by curators and archivists of the museum in order to have a general overview of the museum and be able to do the following task:
   * assign a statue to a given room covered by one of the proximity beacons,
   * assign information to a given statue and see the relative feedback by the user,
   * unlock a statue in order to change its location within the museum.
-  
+  This operations will be done by interacting with the *Elastic Beanstalk Web API* using REST calls.
