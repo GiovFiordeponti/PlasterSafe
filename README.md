@@ -18,3 +18,5 @@ Also:
 - [Gianluca Circelli](https://www.linkedin.com/in/gianluca-circelli-6b05471a8/)
 - [Giovanni Fiordeponti](https://www.linkedin.com/in/giovanni-fiordeponti-070aa3172/)
 - [Valerio Valente](https://www.linkedin.com/in/valerio-valente-222382190/)
+
+Last, but not least, thanks to [Binu Nejat](https://www.linkedin.com/in/binu-nejat-687445108/) for giving us feedbacks  during the design process
