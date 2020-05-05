@@ -11,7 +11,7 @@ As part the [Internet of Things course of MSc in Computer Science Engineering at
 
 Also:
 - A brief video made by Valerio which explains the key aspects of the PlasterTalk design process can be seen [here](https://youtu.be/3rEHzNmYxQY).
-- A brief video made by Giovanni which explains the key elements of the PlasterTalk architecture can be seen [here](https://youtu.be/ltyrwNhfKdc).
+- A brief video made by Giovanni which explains the key elements of the PlasterTalk architecture can be seen [here](https://youtu.be/mKcVaqctg4E).
 
 ## Authors
 
