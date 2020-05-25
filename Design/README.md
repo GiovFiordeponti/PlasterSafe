@@ -26,14 +26,14 @@ To have a better understanding of the environment in which *PlasterSafe* will wo
   - get information in real time about the artifacts and the collection in general,
   - be aware that every art piece, if moved, keeps perfect conditions, 
   - give permissions to couriers to see the measures retrieved by statues in real-time.
-### Jamie - Security
+### Jamie - Courier
 <img src="images/security.JPG" alt="archivist"
 	title="archivist" width="150" height="260" align="right"/>
 - Name: Jamie
 - Gender: Male
 - Age: 35
 - Education: Bachelor’s Degree in Sports Education
-- Occupation: Museum Conservator
+- Occupation: Courier
 - Hobby: Fishing, Jogging
 - Needs: get real-time information on the safety of all statues
 
@@ -41,7 +41,7 @@ To have a better understanding of the environment in which *PlasterSafe* will wo
 For each persona we develop a storyboard, i.e. a concrete situation where our application can solve one or many needs by the interested person.
 
 ### Archivist Storyboard
-Annette sits at her desk and catalogs new artifacts that come and leave the museum. She must keeps track if a statue is moved to a different museum for a temporary exhibit and, in such case, how to arrange the transportation with the affiliated *couriers* of the museum. After each movement, she needs to compile a *condition report* of the statue to be sure that after each movement the statue does not present any damage at all. 
+Annette sits at her desk and catalogs new artifacts that come and leave the museum. In particular, she need to manage the transfer of a plaster statue frome Rome to Venice. She needs to arrange the transportation with the affiliated *courier* of the museum. After each movement, she needs to compile a *condition report* of the statue to be sure that the statue does not present any damage at all. 
 ### Security Storyboard
 Jamie is one the museum's courier. It was assigned to manage a statue movement from Rome to Venice, where a plaster needs to be shown at a temporary exhibition about the ancient Etruscan Age. He needs to be in the same truck where the statue will be placed, and be sure that during the journey across Italy  manages the influx of visitors to preserve the stability of the statues. Given the size of the museum and the presence of many visitors, it is difficult to check the different areas of the museum at the same time. If a statue is moved, he cannot know where the statue is currently located.
 
