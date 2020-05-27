@@ -23,12 +23,12 @@ As we can see:
   * keep track of the statue's movements and send gyroscope/accelerometer measures through the network.
   
 Two end-user applications will interact with this system. This applications consists of:
-* A mobile application developed with Android Studio which will give to couriers the possibility to see if:
-  * some statues that are being moved are subject to extraneous movements,
+* A section for the couriers where they can:
+  * see if some statues are being moved are subject to extraneous movements,
   * control the movements of the statue while moving.
   
   These task can be done by retrieving the statues measurements directly from the *AWS IoT Core* platform.
-* A web application will be used by curators and archivists of the museum in order to have a general overview of the museum and be able to do the following task:
+* A section for archivists to have a general overview of the museum and be able to do the following task:
   * assign informations to a given statue and see the relative measures from the statue itself,
   * assign a statue to a courier for a particular movement operation. This will give him the opportunity to see the measures taken by the statue.
   * download measures from a given period of time in *csv format* 
