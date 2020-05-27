@@ -1,4 +1,4 @@
-# PlasterSafe evaluation
+# PlasterSafe Evaluation
 The evaluations will be made from the user's point of view and from a technical point of view.
 
 ## User:
