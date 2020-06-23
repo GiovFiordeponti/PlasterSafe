@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+	<title>PlasterSafe</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- External libraries -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.685.0.min.js"></script>
+	<!-- Internal libraries -->
+	<link rel="stylesheet" href="stylesheets/styleSheetStart.css">
+	<script src="dist/amazon-cognito-auth.min.js"></script>
+	<script src="dist/aws_iot_sdk.js"></script>
+	<script src="src/constants.js"></script>
+	<script src="src/aws/cognito.js"></script>
+	<script src="src/aws/iot.js"></script>
+	<script src="src/view/page.js"></script>
+	<script src="src/util/notification.js"></script>
+	<script src="src/app.js"></script>
+	<style>
+
+	</style>
+</head>
+
+<body>
+	<!-- Navbar -->
+	<nav class="navbar navbar-expand-md bg-dark navbar-dark">
+		<!-- Brand -->
+		<a class="navbar-brand" href="#">PlasterSafe</a>
+		<a class="navbar-brand" id="userId"></a>
+		<a class="navbar-brand" id="dashboard"></a>
+		<!-- Toggler/collapsibe Button -->
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<!-- Navbar links -->
+		<div class="collapse navbar-collapse" id="collapsibleNavbar">
+			<ul class="navbar-nav">
+				<li class="nav-item" id="alert" hidden>
+					<button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal">
+						Alert <span class="badge badge-dark" id="alertCount">0</span>
+					</button>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="signButton" href="javascript:void(0)">Sign In</a>
+				</li>
+
+			</ul>
+		</div>
+	</nav>
+	<!-- error -->
+	<div class="alert alert-danger" role="alert" id="error" hidden></div>
+	<div id="welcomeDiv">
+		<div class="container-fluid bg-1 text-center">
+			<h3 class="margin">Welcome to PlasterSafe!</h3>
+			<p>Get real-time information about the statues of your museum, while they're being moved from one exhibition
+				to another!</p>
+		</div>
+		<div class="container-fluid bg-2 text-center">
+			<h3 id="update" class="margin">Authors: </h3>
+			<p>Gianluca Circelli</p>
+			<p>Giovanni Fiordeponti</p>
+		</div>
+	</div>
+	<div id="mainDiv" hidden>
+		<!-- First Container -->
+		<div class="container-fluid bg-1 text-center" id="statues">
+			<div class="custom-control custom-switch">
+				<input type="checkbox" class="custom-control-input" id="notificationSwitch"
+					onclick="initNotification()">
+				<label class="custom-control-label" for="notificationSwitch">Notify me</label>
+			</div>
+			<h3 class="margin">Statue List:</h3>
+		</div>
+
+		<!-- Second Container -->
+		<div class="container-fluid bg-2 text-center">
+			<h3 class="margin">Temperature: (Celsius)<span>
+					<h4 id="tempUpdate"></h4>
+				</span></h3>
+			<p id="temperature"></p>
+
+			<div class="d-flex justify-content-left my-4">
+				<div class="w-20" id="temp_max_thresh_div" hidden>
+					<input type="range" class="custom-range" id="temp_max_thresh" min="0" max="40" step="1">
+					<span class="font-weight-bold text-primary ml-2 valueSpan2">Threshold:</span>
+					<span id="temp_max_thresh_value" class="font-weight-bold text-primary ml-2 valueSpan2"></span>
+				</div>
+				<div class="w-20" id="temp_min_thresh_div" hidden>
+					<input type="range" class="custom-range" id="temp_min_thresh" min="0" max="40" step="1">
+					<span class="font-weight-bold text-primary ml-2 valueSpan2">Threshold:</span>
+					<span id="temp_min_thresh_value" class="font-weight-bold text-primary ml-2 valueSpan2"></span>
+				</div>
+			</div>
+		</div>
+
+		<!-- Third Container (Grid) -->
+		<div class="container-fluid bg-3 text-center">
+			<h3 class="margin">Accelerometer:<span>
+					<h4 id="accUpdate"></h4>
+				</span></h3><br>
+			<div class="row">
+				<div class="col-sm-4">
+					<h4>x</h4>
+					<p id="x"></p>
+				</div>
+				<div class="col-sm-4">
+					<h4>y</h4>
+					<p id="y"></p>
+				</div>
+				<div class="col-sm-4">
+					<h4>z</h4>
+					<p id="z"></p>
+				</div>
+			</div>
+			<div class="d-flex justify-content-left my-4">
+				<div class="w-20" id="acc_thresh_div" hidden>
+					<input type="range" class="custom-range" id="acc_thresh" min="-2" max="2" step="0.1">
+					<span class="font-weight-bold text-primary ml-2 valueSpan2">Threshold:</span>
+					<span id="acc_thresh_value" class="font-weight-bold text-primary ml-2 valueSpan2"></span>
+				</div>
+			</div>
+		</div>
+		<!-- Fourth Container -->
+		<div class="container-fluid bg-2 text-center">
+			<h3 class="margin">Signal Magnitude Area:<span>
+					<h4 id="smaUpdate"></h4>
+				</span></h3>
+			<p id="sma"></p>
+			<div class="d-flex justify-content-left my-4">
+				<div class="w-20" id="sma_thresh_div" hidden>
+					<input type="range" class="custom-range" id="sma_thresh" min="0" max="10" step="0.1">
+					<span class="font-weight-bold text-primary ml-2 valueSpan2">Threshold:</span>
+					<span id="sma_thresh_value" class="font-weight-bold text-primary ml-2 valueSpan2"></span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- alert modal -->
+	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title normal-text" id="exampleModalLabel">Alert History<span
+							id="modalCount"></span></h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<ul class="list-group" id="alert-group">
+					</ul>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+
+</html>
