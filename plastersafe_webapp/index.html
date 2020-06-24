@@ -32,7 +32,6 @@
 		<!-- Brand -->
 		<a class="navbar-brand" href="#">PlasterSafe</a>
 		<a class="navbar-brand" id="userId"></a>
-		<a class="navbar-brand" id="dashboard"></a>
 		<!-- Toggler/collapsibe Button -->
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
 			<span class="navbar-toggler-icon"></span>
@@ -45,6 +44,9 @@
 					<button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal">
 						Alert <span class="badge badge-dark" id="alertCount">0</span>
 					</button>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="dashboard" href="dashboard"></a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" id="signButton" href="javascript:void(0)">Sign In</a>
@@ -70,6 +72,7 @@
 	<div id="mainDiv" hidden>
 		<!-- First Container -->
 		<div class="container-fluid bg-1 text-center" id="statues">
+			<div id="error-section"></div>
 			<div class="custom-control custom-switch">
 				<input type="checkbox" class="custom-control-input" id="notificationSwitch"
 					onclick="initNotification()">
@@ -86,15 +89,15 @@
 			<p id="temperature"></p>
 
 			<div class="d-flex justify-content-left my-4">
-				<div class="w-20" id="temp_max_thresh_div" hidden>
-					<input type="range" class="custom-range" id="temp_max_thresh" min="0" max="40" step="1">
-					<span class="font-weight-bold text-primary ml-2 valueSpan2">Threshold:</span>
-					<span id="temp_max_thresh_value" class="font-weight-bold text-primary ml-2 valueSpan2"></span>
-				</div>
 				<div class="w-20" id="temp_min_thresh_div" hidden>
 					<input type="range" class="custom-range" id="temp_min_thresh" min="0" max="40" step="1">
-					<span class="font-weight-bold text-primary ml-2 valueSpan2">Threshold:</span>
-					<span id="temp_min_thresh_value" class="font-weight-bold text-primary ml-2 valueSpan2"></span>
+					<span class="font-weight-bold text-primary ml-2 valueSpan2">Min Threshold:</span>
+					<span id="temp_min_thresh_value" class="font-weight-bold text-primary ml-2 valueSpan2"></span><span class="font-weight-bold text-primary ml-2 valueSpan2">°</span>
+				</div>
+				<div class="w-20" id="temp_max_thresh_div" hidden>
+					<input type="range" class="custom-range" id="temp_max_thresh" min="0" max="40" step="1">
+					<span class="font-weight-bold text-primary ml-2 valueSpan2">Max Threshold:</span>
+					<span id="temp_max_thresh_value" class="font-weight-bold text-primary ml-2 valueSpan2"></span><span class="font-weight-bold text-primary ml-2 valueSpan2">°</span>
 				</div>
 			</div>
 		</div>
@@ -122,13 +125,13 @@
 				<div class="w-20" id="acc_thresh_div" hidden>
 					<input type="range" class="custom-range" id="acc_thresh" min="-2" max="2" step="0.1">
 					<span class="font-weight-bold text-primary ml-2 valueSpan2">Threshold:</span>
-					<span id="acc_thresh_value" class="font-weight-bold text-primary ml-2 valueSpan2"></span>
+					<span id="acc_thresh_value" class="font-weight-bold text-primary ml-2 valueSpan2"></span><span class="font-weight-bold text-primary ml-2 valueSpan2">g</span>
 				</div>
 			</div>
 		</div>
 		<!-- Fourth Container -->
 		<div class="container-fluid bg-2 text-center">
-			<h3 class="margin">Signal Magnitude Area:<span>
+			<h3 class="margin">Magnitude:<span>
 					<h4 id="smaUpdate"></h4>
 				</span></h3>
 			<p id="sma"></p>
@@ -136,7 +139,7 @@
 				<div class="w-20" id="sma_thresh_div" hidden>
 					<input type="range" class="custom-range" id="sma_thresh" min="0" max="10" step="0.1">
 					<span class="font-weight-bold text-primary ml-2 valueSpan2">Threshold:</span>
-					<span id="sma_thresh_value" class="font-weight-bold text-primary ml-2 valueSpan2"></span>
+					<span id="sma_thresh_value" class="font-weight-bold text-primary ml-2 valueSpan2"></span><span class="font-weight-bold text-primary ml-2 valueSpan2">g</span>
 				</div>
 			</div>
 		</div>

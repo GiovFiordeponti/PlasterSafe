@@ -120,7 +120,7 @@ int con(char *address, char *port)
 
 /**
  * @returns a string of the form 
- * {"id": 1, "temperature": 29, "humidity": 36, "wind_direction": 131, "wind_intensity": 57, "rain_height": 32}
+ * <acc_x> <acc_y> <acc_z> <temp>
  */
 
 char * get_data_from_sensors()
@@ -129,14 +129,14 @@ char * get_data_from_sensors()
     static char msg[100];
     memset(msg, 0, sizeof msg);
 
-    int acc_x = random_number(50, 150);
+    int acc_x = random_number(180, 230);
     concat_msg(msg, acc_x);
-    int acc_y = random_number(50, 150);
+    int acc_y = random_number(180, 230);
     concat_msg(msg, acc_y);
-    int acc_z = random_number(50, 150);
+    int acc_z = random_number(180, 230);
     concat_msg(msg, acc_z);
 
-    int temp = random_number(1000,1200);
+    int temp = random_number(1000,1250);
     concat_msg(msg, temp); 
 
     printf("data: %s ", msg);

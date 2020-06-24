@@ -105,6 +105,9 @@ typings/
 tmp/
 temp/
 
+#constants 
+src/constants.js
+
 # res folder of the project 
 resources/root-CA.crt
 resources/virtualstation.cert.pem

@@ -142,3 +142,24 @@ function createAlert(title, body){
 function updateNotificationCount(count){
     document.getElementById("alertCount").innerHTML = count;
 }
+
+function createErrorMessage(text){
+    let errorSection = document.getElementById("error-section");
+    let error = document.createElement("div");
+    error.setAttribute("class", "alert alert-danger alert-dismissible fade show");
+    error.setAttribute("role", "alert");
+    let message = document.createElement("strong");
+    message.innerHTML = text;
+    error.appendChild(message);
+    let closeButton = document.createElement("button");
+    closeButton.setAttribute("type", "button");
+    closeButton.setAttribute("class", "close");
+    closeButton.setAttribute("data-dismiss", "alert");
+    closeButton.setAttribute("aria-label", "Close");
+    spanButton = document.createElement("span");
+    spanButton.setAttribute("aria-hidden", "true");
+    spanButton.innerHTML = "&times;";
+    closeButton.appendChild(spanButton);
+    error.appendChild(closeButton);
+    errorSection.appendChild(error);
+}

@@ -11,50 +11,46 @@ lsm303dlhc_t dev;
 int16_t temp_value;
 lsm303dlhc_3d_data_t acc_value;
 
+/**
+ * Appends an integer value to the current string after a whitespace
+ * 
+ * @param {char *} msg the string where we want to insert the integer value
+ * @param {int} value the integer value we want to append
+ */
+void concat_msg(char *msg, int value)
+{
+    char buf[12];
+    snprintf(buf, 12, "%d ", value); // puts string into buffer
+    strcat(msg, buf);
+}
+
 int main(void)
 {
-    if (lsm303dlhc_init(&dev, &lsm303dlhc_params[0]) == 0)
+    if (lsm303dlhc_init(&dev, &lsm303dlhc_params[0]) != 0)
     {
-        printf("start\n");
-    }
-    else
-    {
-        printf("failed\n");
         return 1;
     }
-    //float acc_x = 0.0;
-    //float acc_y = 0.0;
-    //float acc_z = 0.0;
-    //float mag_x = 0.0;
-    //float mag_y = 0.0;
-    //float mag_z = 0.0;
 
     while (1)
     {
+        static char msg[100];
+        memset(msg, 0, sizeof msg);
         if (lsm303dlhc_read_acc(&dev, &acc_value) == 0)
         {
-            printf("%i %i %i\n", acc_value.x_axis,
-                   acc_value.y_axis,
-                   acc_value.z_axis);
-        }
-        else
-        {
-            printf("failed\n");
+            concat_msg(msg, acc_value.x_axis);
+            concat_msg(msg, acc_value.y_axis);
+            concat_msg(msg, acc_value.z_axis);
         }
 
         if (lsm303dlhc_read_temp(&dev, &temp_value) == 0)
         {
-            printf("%i\n", temp_value);
-        }
-        else
-        {
-            printf("failed\n");
+            concat_msg(msg, temp_value);
         }
 
+        printf(msg);
         xtimer_sleep(1);
     }
 
     /* should be never reached */
-    printf("stop\n");
     return 0;
 }

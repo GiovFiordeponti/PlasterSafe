@@ -25,6 +25,9 @@ TEMP_TOPIC = PLASTERSAFE_TOPIC+"/temp"
 THRESH_TOPIC = PLASTERSAFE_TOPIC+"/thresh"
 ERROR_TOPIC = PLASTERSAFE_TOPIC+"/err"
 
+THREAD_1_SLEEP_SECONDS = 5
+THREAD_2_SLEEP_SECONDS = 10
+
 
 def map_digital_values(acc_x, acc_y, acc_z, temp):
     analog_acc_x = interp(float(acc_x), [0, 255], [-2, 2])
@@ -124,6 +127,7 @@ def send_measures_to_aws(x_discrete, y_discrete, z_discrete, temp, statue_id):
         ###############################
         #    Sensor measures check    #
         ###############################
+
         if sma > samples[statue_id]["sma_thresh"]:
             # Invio un alert al cloud
             msg = {
@@ -215,7 +219,7 @@ def check_if_statues_are_alive():
                 send_error(statue_id, current_ts, samples[statue_id]["last"])
             else:
                 print("statue %s is alive"%(statue_id))
-        time.sleep(10)
+        time.sleep(THREAD_2_SLEEP_SECONDS)
 
 def mqttsn_mode(id_client, topic):
     client = mqtt.Client(id_client)
@@ -225,14 +229,11 @@ def mqttsn_mode(id_client, topic):
     client.subscribe(topic)
     print("Subscribe to topic " + topic)
     client.loop_forever()
-    while True:
-        check_if_statues_are_alive()
-        time.sleep(10)
 
 
 def serial_mode():
     try:
-        port = serial.Serial("/dev/ttyACM0", baudrate=115200, timeout=1.0)
+        port = serial.Serial("/dev/ttyACM0", baudrate=115200, timeout=THREAD_1_SLEEP_SECONDS)
 
         while True:
             msg = port.readline().decode('ISO-8859-1')
@@ -262,7 +263,7 @@ def emulated_mode():
             send_measures_to_aws(
                 payload[0], payload[1], payload[2], payload[3], payload[4])
             # waiting between one publication and another
-            time.sleep(1)
+            time.sleep(THREAD_1_SLEEP_SECONDS)
 
 
 if __name__ == "__main__":

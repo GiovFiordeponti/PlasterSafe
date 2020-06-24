@@ -18,10 +18,11 @@ class Controller:
         self.myMQTTClient.configureCredentials("./cert/root-CA.crt",
                                                "./cert/private.pem.key",
                                                "./cert/certificate.pem.crt")
-        self.myMQTTClient.configureOfflinePublishQueueing(-1)
+        self.myMQTTClient.configureOfflinePublishQueueing(500)
         self.myMQTTClient.configureDrainingFrequency(2)
         self.myMQTTClient.configureConnectDisconnectTimeout(10)
-        self.myMQTTClient.configureMQTTOperationTimeout(5)
+        self.myMQTTClient.configureAutoReconnectBackoffTime(1, 128, 20)
+        self.myMQTTClient.configureMQTTOperationTimeout(500)
         # connection
         self.myMQTTClient.connect()
         print("Connected to Aws!")
@@ -29,7 +30,7 @@ class Controller:
     # publication on the topic
     def publish(self, topic, data):
         # publish the message forwarded by broker
-        self.myMQTTClient.publish(topic, data, 0)
+        self.myMQTTClient.publishAsync(topic, data, 1)
         print('Published topic -> %s: %s' % (topic, data))
 
     def subscribe(self, topic, callback):

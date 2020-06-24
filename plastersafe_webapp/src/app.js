@@ -1,7 +1,7 @@
 window.onload = function () {
     this.statues = {};
     const DEFAULT_TOPIC = "plasterTopic";
-    this.topicList = [DEFAULT_TOPIC + "/status", DEFAULT_TOPIC + "/sma", DEFAULT_TOPIC + "/acc", DEFAULT_TOPIC + "/temp", DEFAULT_TOPIC + "/thresh"];
+    this.topicList = [DEFAULT_TOPIC + "/status", DEFAULT_TOPIC + "/sma", DEFAULT_TOPIC + "/acc", DEFAULT_TOPIC + "/temp", DEFAULT_TOPIC + "/thresh", DEFAULT_TOPIC + "/err"];
     this.selectedStatue = null;
     this.notificationCount = 0;
     this.cognito = new Cognito(authCallback.bind(this));
@@ -53,7 +53,7 @@ function authCallback(result) {
 }
 
 function plasterMessageCallback(topic, payload) {
-
+    console.info("Latency: %d ms", Date.now()-payload.ts);
     if (payload.id && !this.statues[payload.id]) {
         this.statues[payload.id] = { temp: { value: "ok", ts: 0 }, sma: { value: "ok", ts: 0 }, acc: { value: { acc_x: "ok", acc_y: "ok", acc_z: "ok" }, ts: 0 }, thresh: {} };
         addStatue(payload.id, plasterCallback.bind(this));
@@ -101,6 +101,9 @@ function plasterMessageCallback(topic, payload) {
                 }
             })
             break;
+        case this.topicList[5]:
+            createErrorMessage("Statue " + payload.id + " stopped communication since " + new Date(Number(payload.value)).toLocaleString());
+            break;
         default:
             console.warn("topic not recognized");
             break;
@@ -128,11 +131,15 @@ function plasterCallback(id) {
 
 function sliderCallback(id, thresh, domElement) {
     document.getElementById(domElement).innerHTML = thresh;
-    let thresId = domElement.split("_")[0]+"_"+domElement.split("_")[1];
+    let items = domElement.split("_");
+    let threshId = items[0] + "_" + items[1];
+    if(items[0] == "temp"){
+        threshId += "_"+items[2];
+    }
     let payload = {};
     payload["id"] = id;
     payload["ts"] = Date.now();
-    payload[thresId] = thresh;
+    payload[threshId] = thresh;
     //callback(payload);
     this.IoT.publish("plasterTopic/thresh", JSON.stringify(payload));
 }
@@ -143,7 +150,7 @@ function createNotificationObject(topic, id, value, date) {
             return {
                 title: "Temperature alert from " + id,
                 body: value.toFixed(2) + "° [" + date.toLocaleString() + "]",
-                icon: "../img/" + topic.replace("/", "-") + ".png"
+                icon: "./img/" + topic.replace("/", "-") + ".png"
             };
         case this.topicList[2]:
             let body = "[";
@@ -160,20 +167,20 @@ function createNotificationObject(topic, id, value, date) {
             return {
                 title: "Acceleration alert from " + id,
                 body: body + " [" + date.toLocaleString() + "]",
-                icon: "../img/" + topic.replace("/", "-") + ".png"
+                icon: "./img/" + topic.replace("/", "-") + ".png"
             };
         case this.topicList[1]:
             return {
                 title: "SMA alert from " + id,
-                body: value.toFixed(2) + "dB [" + date.toLocaleString() + "]",
-                icon: "../img/" + topic.replace("/", "-") + ".png"
+                body: value.toFixed(2) + "g [" + date.toLocaleString() + "]",
+                icon: "./img/" + topic.replace("/", "-") + ".png"
             };
         case this.topicList[0]:
             if (value == "start" || value == "stop") {
                 return {
                     title: "Statue " + id + " tracking " + (value == "start" ? "started" : "stopped"),
                     body: "[" + date.toLocaleString() + "]",
-                    icon: "../img/" + topic.replace("/", "-") + "-" + value + ".png"
+                    icon: "./img/" + topic.replace("/", "-") + "-" + value + ".png"
                 };
             }
             else {
@@ -183,7 +190,13 @@ function createNotificationObject(topic, id, value, date) {
             return {
                 title: "Statue " + id + " new value " + value.value + " for threshold " + value.key,
                 body: "[" + date.toLocaleString() + "]",
-                icon: "../img/" + topic.replace("/", "-") + ".png"
+                icon: "./img/" + topic.replace("/", "-") + ".png"
+            };
+        case this.topicList[5]:
+            return {
+                title: "Statue " + id + " stopped communication since " + new Date(Number(value)).toLocaleString(),
+                body: "[" + date.toLocaleString() + "]",
+                icon: ""
             };
         default:
             console.warn("topic not recognized");

@@ -1,29 +1,5 @@
 /** This file contains functions used to draw the dashboard */
 
-/**
- * Set the active item within the navbar
- * @param {string} section if specified, it means that the mobile navbar must be considered
- */
-function setModes(section) {
-    let overall = document.getElementById("overall" + (section != null ? "_mobile" : ""));
-    let lastHour = document.getElementById("lasthour" + (section != null ? "_mobile" : ""));
-
-    let overallLink = overall.children[0];
-    let lastHourLink = lastHour.children[0];
-
-    overallLink.addEventListener("click", () => { overall.setAttribute("class", "active"); lastHour.setAttribute("class", ""); changeMode(false); });
-    lastHourLink.addEventListener("click", () => { overall.setAttribute("class", ""); lastHour.setAttribute("class", "active"); changeMode(true); });
-}
-
-/**
- * Change the operating mode of the dashboard (overall/last hour)
- * @param {boolean} value true if we want data from last hour, false otherwise
- */
-function changeMode(value) {
-    request.message.lastHour = value;
-    console.log("sending: %o", request);
-    socket.send(JSON.stringify(request));
-}
 
 /**
  * Create radio element within the page
@@ -61,7 +37,9 @@ function initDiv(divId, titleDiv) {
     if (divDom) {
         divDom.textContent = "";
         let title = document.createElement('h4');
-        title.textContent = titleDiv;
+        let titleContent = document.createElement('strong');
+        titleContent.textContent = titleDiv;
+        title.appendChild(titleContent);
         divDom.appendChild(title);
     }
     return divDom;
@@ -75,11 +53,13 @@ function clearAnalytics() {
     while (elements[0]) {
         elements[0].parentNode.removeChild(elements[0]);
     }
-    initDiv("sma", "SMA");
+    initDiv("sma", "Magnitude");
     initDiv("temp", "Temperature");
     initDiv("x", "X-Axis");
     initDiv("y", "Y-Axis");
     initDiv("z", "Z-Axis");
+    initDiv("error", "Errors");
+    initDiv("thresh", "Threshold Variations");
 }
 
 /**
@@ -93,7 +73,7 @@ function sampleCallback(data, action) {
         case "temp":
             let tempDiv = initDiv("temp", "Temperature");
             Object.keys(data).forEach(statue =>
-                Object.keys(data[statue]).forEach(sample => {
+                Object.keys(data[statue]).sort().forEach(sample => {
                     let temp = document.createElement("p");
                     temp.textContent = data[statue][sample].toFixed(3) + "° (" + new Date(Number(sample)).toLocaleString() + ")";
                     tempDiv.appendChild(temp);
@@ -101,11 +81,11 @@ function sampleCallback(data, action) {
             )
             break;
         case "sma":
-            let smaDiv = initDiv("sma", "SMA");
+            let smaDiv = initDiv("sma", "Magnitude");
             Object.keys(data).forEach(statue =>
-                Object.keys(data[statue]).forEach(sample => {
+                Object.keys(data[statue]).sort().forEach(sample => {
                     let sma = document.createElement("p");
-                    sma.textContent = data[statue][sample].toFixed(3) + "dB (" + new Date(Number(sample)).toLocaleString() + ")";
+                    sma.textContent = data[statue][sample].toFixed(3) + "g (" + new Date(Number(sample)).toLocaleString() + ")";
                     smaDiv.appendChild(sma);
                 })
             )
@@ -115,7 +95,7 @@ function sampleCallback(data, action) {
             let yDiv = initDiv("y", "Y-Axis");
             let zDiv = initDiv("z", "Z-Axis");
             data && Object.keys(data).forEach(statue => {
-                Object.keys(data[statue]).forEach(sample => {
+                Object.keys(data[statue]).sort().forEach(sample => {
                     let x = document.createElement("p");
                     x.textContent = (isNaN(data[statue][sample]["acc_x"]) ? "ok " : data[statue][sample]["acc_x"].toFixed(3) + "g ") + "(" + new Date(Number(sample)).toLocaleString() + ")";
                     xDiv.appendChild(x);
@@ -127,6 +107,47 @@ function sampleCallback(data, action) {
                     zDiv.appendChild(z);
                 })
             });
+            break;
+        case "err":
+            let errDiv = initDiv("error", "Errors");
+            Object.keys(data).forEach(statue =>
+                Object.keys(data[statue]).sort().forEach(sample => {
+                    let error = document.createElement("p");
+                    error.textContent = "No message since " + new Date(Number(data[statue][sample])).toLocaleString().split(" ")[1] + " (" + new Date(Number(sample)).toLocaleString() + ")";
+                    errDiv.appendChild(error);
+                })
+            )
+            break;
+        case "thresh":
+            let threshDiv = initDiv("thresh", "Threshold Variations");
+            Object.keys(data).forEach(statue =>
+                Object.keys(data[statue]).sort().forEach(sample => {
+                    let thresh = document.createElement("p");
+                    let variation = data[statue][sample];
+                    let msg = "";
+                    Object.keys(variation).forEach(item => {
+                        let sensor = item.split("_")[0];
+                        switch (sensor) {
+                            case "acc":
+                                msg = "Acceleration threshold changed to " + variation[item] + " g";
+                                break;
+                            case "sma":
+                                msg = "Magnitude threshold changed to " + variation[item] + " g";
+                                break;
+                            case "temp":
+                                if (item.split("_")[1] == "min") {
+                                    msg = "Temperature lower threshold changed to " + variation[item] + "°";
+                                }
+                                else {
+                                    msg = "Temperature upper threshold changed to " + variation[item] + "°";
+                                }
+                                break;
+                        }
+                    });
+                    thresh.textContent = msg + " (" + new Date(Number(sample)).toLocaleString() + ")";
+                    threshDiv.appendChild(thresh);
+                })
+            )
 
     }
 

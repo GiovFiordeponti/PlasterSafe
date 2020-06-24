@@ -25,9 +25,12 @@ function sessionCallback(item) {
     let session = statues[statue].sessions[index];
     console.log("session %o", session);
     if (session) {
+        document.getElementById("selected").innerHTML = "Selected "+statue+" ["+new Date(Number(session.start)).toLocaleString()+" - "+new Date(Number(session.stop)).toLocaleString()+"]";
         sendRequest({ action: "temp", id: statue, ts1: Number(session.start), ts2: Number(session.stop) }, dataCallback);
         sendRequest({ action: "sma", id: statue, ts1: Number(session.start), ts2: Number(session.stop) }, dataCallback);
         sendRequest({ action: "acc", id: statue, ts1: Number(session.start), ts2: Number(session.stop) }, dataCallback);
+        sendRequest({ action: "thresh", id: statue, ts1: Number(session.start), ts2: Number(session.stop) }, dataCallback);
+        sendRequest({ action: "err", id: statue, ts1: Number(session.start), ts2: Number(session.stop) }, dataCallback);
     }
 }
 
@@ -81,10 +84,13 @@ function csvDownload() {
             if (item != "sessions") {
                 let field = statues[statue][item];
                 console.log("field %o", field);
-                Object.keys(field).forEach((fieldItem, fieldIndex) => {
+                Object.keys(field).sort().forEach((fieldItem, fieldIndex) => {
                     console.log(fieldItem);
                     let value = isNaN(field[fieldItem]) ? JSON.stringify(field[fieldItem]).replace(",", " ") : field[fieldItem].toFixed(3);
-                    csv += item + ";" + new Date(Number(fieldItem)).toLocaleString() + ";" + value + (item == "acc" ? "g" : (item == "sma" ? "dB" : " celsius"));
+                    if(item == "err"){
+                        value = "last message at "+new Date(Number(field[fieldItem])).toLocaleString();
+                    }
+                    csv += item + ";" + new Date(Number(fieldItem)).toLocaleString() + ";" + value + (item == "acc" ? "g" : (item == "sma" ? "g" : (item=="temp" ? " celsius" : "")));
                     if (fieldIndex + 1 != Object.keys(field).length || indexItem + 1 != Object.keys(statues[statue]).length) {
                         csv += "\r\n";
                     }
@@ -108,7 +114,9 @@ window.onload = function () {
     auth = localStorage.getItem("CognitoIdentityServiceProvider.3idm7f4rpmg218rrpu3drarnjj.LastAuthUser");
 
     if (auth != null) {
+        document.getElementById("download").disabled = true;
         document.getElementById("page").hidden = false;
+        document.getElementById("userId").innerHTML = auth;  
         sendRequest({ action: "status" }, statusCallback);
     }
     else {
