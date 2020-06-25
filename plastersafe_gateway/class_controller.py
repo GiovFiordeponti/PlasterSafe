@@ -18,10 +18,16 @@ class Controller:
         self.myMQTTClient.configureCredentials("./cert/root-CA.crt",
                                                "./cert/private.pem.key",
                                                "./cert/certificate.pem.crt")
+        
+        # Configure the offline queue for publish requests to be 500 in size
         self.myMQTTClient.configureOfflinePublishQueueing(500)
         self.myMQTTClient.configureDrainingFrequency(2)
+        # Configure connect/disconnect timeout to be 10 seconds
         self.myMQTTClient.configureConnectDisconnectTimeout(10)
+        # Configure the auto-reconnect backoff to start with 1 second and use 128 seconds as a maximum back off time.
+        # Connection over 20 seconds is considered stable and will reset the back off time back to its base.
         self.myMQTTClient.configureAutoReconnectBackoffTime(1, 128, 20)
+        # Configure MQTT operation timeout to be 500 seconds
         self.myMQTTClient.configureMQTTOperationTimeout(500)
         # connection
         self.myMQTTClient.connect()

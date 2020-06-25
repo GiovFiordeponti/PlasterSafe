@@ -1,5 +1,6 @@
 window.onload = function () {
     this.statues = {};
+    this.stats = {};
     const DEFAULT_TOPIC = "plasterTopic";
     this.topicList = [DEFAULT_TOPIC + "/status", DEFAULT_TOPIC + "/sma", DEFAULT_TOPIC + "/acc", DEFAULT_TOPIC + "/temp", DEFAULT_TOPIC + "/thresh", DEFAULT_TOPIC + "/err"];
     this.selectedStatue = null;
@@ -9,6 +10,17 @@ window.onload = function () {
     cognito.parseCognitoWebResponse(window.location.href);
 
     addSignInFunction(userAction.bind(this));
+}
+
+function getLatencyStats(statueId, messageSentCount, statueLatency){
+    
+    console.log(statueId, messageSentCount, statueLatency);
+    let avg = 0;
+    statueLatency.latencies.forEach(latency => avg += latency);
+    avg = avg / statueLatency.latencies.length;
+    let runningTime = statueLatency.stop - statueLatency.start;
+    console.log(runningTime, statueId, messageSentCount, statueLatency);
+    console.info("Statistics from statue %s:\nRunning time: %d ms, Messages sent: %d, Received: %d, Min: %d ms, Max: %d ms; AVG: %d ms", statueId, runningTime, messageSentCount, statueLatency.latencies.length, Math.min(...statueLatency.latencies), Math.max(...statueLatency.latencies), avg);
 }
 
 function userAction() {
@@ -53,12 +65,21 @@ function authCallback(result) {
 }
 
 function plasterMessageCallback(topic, payload) {
-    console.info("Latency: %d ms", Date.now()-payload.ts);
+    
+    let latency = Date.now()-payload.ts;
+    console.info("Latency: %d ms", latency);
     if (payload.id && !this.statues[payload.id]) {
         this.statues[payload.id] = { temp: { value: "ok", ts: 0 }, sma: { value: "ok", ts: 0 }, acc: { value: { acc_x: "ok", acc_y: "ok", acc_z: "ok" }, ts: 0 }, thresh: {} };
         addStatue(payload.id, plasterCallback.bind(this));
+        
+        this.stats[payload.id] = {
+            "latencies" : [],
+            "start": Number(payload.ts)
+        };
     }
 
+    this.stats[payload.id].latencies.push(latency);
+    console.log(this.stats);
     let statue = this.statues[payload.id];
 
     switch (topic) {
@@ -90,6 +111,11 @@ function plasterMessageCallback(topic, payload) {
                     "temp_min_thresh": payload.threshold.temp_min_thresh,
                     "sma_thresh": payload.threshold.sma_thresh
                 }
+            }
+            else if(payload.value == "stop"){
+                this.stats[payload.id].stop = Number(payload.ts);
+                let sent = payload.sent;
+                getLatencyStats(payload.id, sent, this.stats[payload.id]);
             }
             break;
         case this.topicList[4]:
