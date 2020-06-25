@@ -57,7 +57,8 @@ def send_measures_to_aws(x_discrete, y_discrete, z_discrete, temp, statue_id):
             "temp_max_thresh": threshold_temp_max,
             "temp_min_thresh": threshold_temp_min,
             "started": current_ts,
-            "last": current_ts
+            "last": current_ts, # last message sent
+            "sent": 0 # message check for latency
         }
 
         msg = {
@@ -73,6 +74,7 @@ def send_measures_to_aws(x_discrete, y_discrete, z_discrete, temp, statue_id):
         }
         print("forwarding alert to aws - Start tracking ...")
         controller.publish(STATUS_TOPIC, json.dumps(msg))
+        samples[statue_id]["sent"] += 1
 
     # store samples in the id dict
     if samples[statue_id]["count"] < 10:
@@ -104,6 +106,7 @@ def send_measures_to_aws(x_discrete, y_discrete, z_discrete, temp, statue_id):
             samples[statue_id]["last"] = current_ts
             print("forwarding alert to aws - Dangerous vibrations for the statue ...")
             controller.publish(ACC_TOPIC, json.dumps(msg))
+            samples[statue_id]["sent"] += 1
 
         # temp check
         if temp > samples[statue_id]["temp_max_thresh"] or temp < samples[statue_id]["temp_min_thresh"]:
@@ -117,6 +120,7 @@ def send_measures_to_aws(x_discrete, y_discrete, z_discrete, temp, statue_id):
             samples[statue_id]["last"] = current_ts
             print("forwarding alert to aws - Dangerous environment values ...")
             controller.publish(TEMP_TOPIC, json.dumps(msg))
+            samples[statue_id]["sent"] += 1
 
     if samples[statue_id]["count"] == 10:
         # compute SMA
@@ -137,6 +141,7 @@ def send_measures_to_aws(x_discrete, y_discrete, z_discrete, temp, statue_id):
             }
             print("forwarding alert to aws - SMA values beyond the threshold ...")
             controller.publish(SMA_TOPIC, json.dumps(msg))
+            samples[statue_id]["sent"] += 1
 
         # send thresh only to cloud if everything is normal
         else:
@@ -153,6 +158,7 @@ def send_measures_to_aws(x_discrete, y_discrete, z_discrete, temp, statue_id):
             }
             print("forwarding alert to aws - Everything is normal ...")
             controller.publish(STATUS_TOPIC, json.dumps(msg))
+            samples[statue_id]["sent"] += 1
         # Restart sample count
         samples[statue_id]["last"] = current_ts
         samples[statue_id]["count"] = 0
@@ -209,6 +215,7 @@ def send_error(statue_id, current_ts, last_ts):
     }
     print("forwarding alert to aws - Statue %s not sending any message after a minute..." %(statue_id))
     controller.publish(ERROR_TOPIC, json.dumps(msg))
+    samples[statue_id]["sent"] += 1
 
 def check_if_statues_are_alive():
     while True:
@@ -305,11 +312,13 @@ if __name__ == "__main__":
         try:
             for statue_id in samples:
                 # Invio un alert al cloud
+                samples[statue_id]["sent"] += 1
                 msg = {
                     "ts": get_current_ts(),
                     "started": samples[statue_id]["started"],
                     "id": statue_id,
-                    "value": "stop"
+                    "value": "stop",
+                    "sent": samples[statue_id]["sent"]
                 }
                 print("forwarding alert(1111) to aws - Stop tracking ...")
                 controller.publish(STATUS_TOPIC, json.dumps(msg))
