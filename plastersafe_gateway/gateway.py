@@ -260,6 +260,8 @@ def emulated_mode():
     statues = dict()
     statues["statue-emulated-1"] = Statue("statue-emulated-1")
     statues["statue-emulated-2"] = Statue("statue-emulated-2")
+    statues["statue-emulated-3"] = Statue("statue-emulated-3")
+    statues["statue-emulated-4"] = Statue("statue-emulated-4")
     while True:
         for statue in statues:
             statues[statue].updateData()
