@@ -247,7 +247,7 @@ def serial_mode():
             print("received msg "+msg)
             if msg != "":
                 measures = msg.split()
-                if len(measures) == 4 and 0 not in measures:
+                if len(measures) == 4 and "0" not in measures:
                     send_measures_to_aws(
                         measures[0], measures[1], measures[2], measures[3], "serial-statue")
                 
