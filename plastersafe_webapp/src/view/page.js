@@ -18,11 +18,11 @@ function showMeasures(acc, temperature, sma) {
     let smaValue = sma.value;
     let smaDate = sma.ts != 0 ? new Date(sma.ts) : new Date();
     // update values
-    document.getElementById("x").innerHTML = accValue["acc_x"] != "ok" ? accValue["acc_x"].toFixed(3) : accValue["acc_x"];
-    document.getElementById("y").innerHTML = accValue["acc_y"] != "ok" ? accValue["acc_y"].toFixed(3) : accValue["acc_y"];
-    document.getElementById("z").innerHTML = accValue["acc_z"] != "ok" ? accValue["acc_z"].toFixed(3) : accValue["acc_z"];
+    document.getElementById("x").innerHTML = accValue["acc_x"] != "ok" ? accValue["acc_x"].toFixed(3)+" g": accValue["acc_x"];
+    document.getElementById("y").innerHTML = accValue["acc_y"] != "ok" ? accValue["acc_y"].toFixed(3)+" g" : accValue["acc_y"];
+    document.getElementById("z").innerHTML = accValue["acc_z"] != "ok" ? accValue["acc_z"].toFixed(3)+" g" : accValue["acc_z"];
     document.getElementById("temperature").innerHTML = tempValue != "ok" ? tempValue.toFixed(3) + "°" : tempValue;
-    document.getElementById("sma").innerHTML = smaValue != "ok" ? smaValue.toFixed(3) : smaValue;
+    document.getElementById("sma").innerHTML = smaValue != "ok" ? smaValue.toFixed(3)+" g" : smaValue;
     // update timestamp
     document.getElementById("tempUpdate").innerHTML = "Last update: " + tempDate.toLocaleString().split(" ")[1];
     document.getElementById("accUpdate").innerHTML = "Last update: " + accDate.toLocaleString().split(" ")[1];
