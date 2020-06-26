@@ -28,8 +28,10 @@ int main(void)
 {
     if (lsm303dlhc_init(&dev, &lsm303dlhc_params[0]) != 0)
     {
+        puts("failed");
         return 1;
     }
+    
 
     while (1)
     {
@@ -47,7 +49,7 @@ int main(void)
             concat_msg(msg, temp_value);
         }
 
-        printf(msg);
+        puts(msg);
         xtimer_sleep(1);
     }
 
