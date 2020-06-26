@@ -250,9 +250,6 @@ def serial_mode():
                 if len(measures) == 4:
                     send_measures_to_aws(
                         measures[0], measures[1], measures[2], measures[3], "serial-statue")
-            else:
-                print("no message received")
-                check_if_statues_are_alive()
                 
     except OSError:
         print('no board connected to serial interface')
