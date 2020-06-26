@@ -244,10 +244,10 @@ def serial_mode():
 
         while True:
             msg = port.readline().decode('ISO-8859-1')
-            print("received msg "+msg)
             if msg != "":
                 measures = msg.split()
                 if len(measures) == 4 and "0" not in measures:
+                    print("received msg "+msg)
                     send_measures_to_aws(
                         measures[0], measures[1], measures[2], measures[3], "serial-statue")
                 
